@@ -145,7 +145,8 @@ def acessar_pagina(url: str) -> str:
     if erro := _validar_dominio(url):
         return erro
 
-    if not any(p in url for p in HREF_PATTERNS_DEVELOPER):
+    secoes_base = [p.strip("/") for p in HREF_PATTERNS_DEVELOPER]
+    if not any(p in url for p in HREF_PATTERNS_DEVELOPER) and not any(url.rstrip("/").endswith(s) for s in secoes_base):
         secoes = ", ".join(HREF_PATTERNS_DEVELOPER)
         return (
             f"Erro: URL fora das seções permitidas do portal Developer. "
