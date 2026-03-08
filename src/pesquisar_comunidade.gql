@@ -1,0 +1,33 @@
+query searchPosts($after: String, $filters: FiltersInput, $limit: Int!, $query: String!, $searchConfig: SearchConfigInput) {
+  searchPosts(
+    after: $after
+    filters: $filters
+    limit: $limit
+    query: $query
+    searchConfig: $searchConfig
+  ) {
+    nodes {
+      createdAt
+      description
+      externalUrl
+      id
+      lastActivityAt
+      shortContent
+      slug
+      images {
+        ... on Image {
+          downloadUrl
+          url
+        }
+      }
+      relativeUrl
+      textContent
+      title
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+    totalCount
+  }
+}
