@@ -10,11 +10,11 @@ from urllib.parse import quote_plus
 from bs4 import BeautifulSoup
 
 from src.browser import buscar_html
-from src.config import BASE_URL, HREF_PATTERNS, SEARCH_URL
+from src.config import BASE_URL_COMUNIDADE, HREF_PATTERNS_COMUNIDADE, SEARCH_URL_COMUNIDADE
 
 
 def _montar_url(query: str) -> str:
-    return SEARCH_URL.format(query=quote_plus(query))
+    return SEARCH_URL_COMUNIDADE.format(query=quote_plus(query))
 
 
 def _extrair_links(html: str) -> list[str]:
@@ -27,10 +27,10 @@ def _extrair_links(html: str) -> list[str]:
         href: str = a_tag["href"]
         texto: str = a_tag.get_text(strip=True)
 
-        if not texto or not any(p in href for p in HREF_PATTERNS):
+        if not texto or not any(p in href for p in HREF_PATTERNS_COMUNIDADE):
             continue
 
-        link = f"{BASE_URL}{href}" if href.startswith("/") else href
+        link = f"{BASE_URL_COMUNIDADE}{href}" if href.startswith("/") else href
 
         entrada = f"- Título: {texto}\n  URL: {link}"
         if entrada not in vistos:

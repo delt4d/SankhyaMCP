@@ -1,5 +1,7 @@
 """
-Leitura e limpeza de conteúdo de posts da Comunidade Sankhya.
+Leitura e limpeza de conteúdo de páginas das fontes Sankhya.
+
+Módulo compartilhado entre Comunidade, Central de Ajuda e Sankhya Developer.
 
 Execução direta (validação manual):
     python -m src.leitor_paginas "https://community.sankhya.com.br/wms/post/slug"
@@ -29,14 +31,14 @@ def _encontrar_conteudo(soup: BeautifulSoup) -> Tag | None:
 
 def extrair_conteudo_limpo(url: str) -> str:
     """
-    Acede a uma URL da Comunidade Sankhya e retorna apenas o conteúdo
-    textual relevante, sem menus, cabeçalhos ou rodapés.
+    Acede a uma URL e retorna apenas o conteúdo textual relevante,
+    sem menus, cabeçalhos ou rodapés.
 
     Args:
-        url: URL de um post em community.sankhya.com.br.
+        url: URL de qualquer fonte Sankhya suportada.
 
     Returns:
-        Texto limpo do post ou mensagem de erro.
+        Texto limpo da página ou mensagem de erro.
     """
     try:
         response = requests.get(url, headers=HTTP_HEADERS, timeout=REQUEST_TIMEOUT)
