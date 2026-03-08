@@ -1,5 +1,4 @@
 import requests
-import argparse
 from pathlib import Path
 from src.get_env import get_env
 
@@ -43,7 +42,7 @@ def pesquisar_comunidade(
     bearer_token: str,
     query: str,
     limit: int,
-    after: str = None,
+    after: str|None = None,
 ) -> dict:
     url = "https://api.bettermode.com/"
     headers = {
@@ -80,6 +79,7 @@ def pesquisar_comunidade(
 
 if __name__ == "__main__":
     import json
+    import argparse
 
     bearer_token = get_env("BEARER_TOKEN")
 
