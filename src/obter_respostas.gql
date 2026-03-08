@@ -1,0 +1,28 @@
+query replies($after: String, $before: String, $excludePins: Boolean, $limit: Int!, $offset: Int, $orderBy: PostListOrderByEnum, $postId: ID!, $reverse: Boolean) {
+  replies(
+    after: $after
+    before: $before
+    excludePins: $excludePins
+    limit: $limit
+    offset: $offset
+    orderBy: $orderBy
+    postId: $postId
+    reverse: $reverse
+  ) {
+    totalCount
+    nodes {
+        id
+        mappingFields {
+            key
+            type
+            value
+        }
+        repliedToId
+        publishedAt
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+  }
+}

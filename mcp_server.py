@@ -31,7 +31,7 @@ def pesquisar_comunidade(termo_pesquisa: str, limit: int, after: str = "") -> st
     return json.dumps(resultado, ensure_ascii=False)
 
 @mcp.tool()
-def acessar_postagem_comunidade(rota: str) -> str: # /developers/personalizacao-desenvolvimento/post/erro-ora-01013-o-usuario-solicitou-o-cancelamento-da-operacao-hF2NxMiD5ALJPlo
+def acessar_postagem_comunidade(rota: str) -> str:
     """
     Acessa o conteúdo completo de uma postagem da Comunidade Sankhya a partir
     de sua rota relativa (campo `relativeUrl` retornado por `pesquisar_comunidade`).

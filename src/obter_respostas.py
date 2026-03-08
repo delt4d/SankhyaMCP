@@ -5,14 +5,14 @@ from get_env import get_env
 
 graphql_query = (
     Path(__file__).parent 
-    / "pesquisar_comunidade.gql"
+    / "obter_respostas.gql"
 ).read_text(encoding="utf-8")
 
-def pesquisar_comunidade(
+def obter_respostas(
     bearer_token: str,
-    query: str,
+    id_post: str,
     limit: int,
-    after: str|None = None,
+    after: str|None = None
 ) -> dict:
     url = "https://api.bettermode.com/"
     headers = {
@@ -25,8 +25,10 @@ def pesquisar_comunidade(
         headers["Authorization"] = f"Bearer {bearer_token}"
 
     variables = {
-        "query": query,
+        "postId": id_post,
         "limit": limit,
+        "reverse": False,
+        "orderBy": "publishedAt"
     }
 
     if after:
@@ -35,7 +37,7 @@ def pesquisar_comunidade(
     payload = {
         "query": graphql_query,
         "variables": variables,
-        "operationName": "searchPosts",
+        "operationName": "replies",
     }
 
     response = requests.post(url, headers=headers, json=payload)
@@ -46,7 +48,6 @@ def pesquisar_comunidade(
 
     return data
 
-
 if __name__ == "__main__":
     import json
     import argparse
@@ -54,24 +55,24 @@ if __name__ == "__main__":
     bearer_token = get_env("BEARER_TOKEN")
 
     parser = argparse.ArgumentParser(description="Busca posts na Comunidade Sankhya.")
-    parser.add_argument("--query",  required=True,       help="Termo de busca")
+    parser.add_argument("--id",     required=True,           help="Id do POST")
     parser.add_argument("--limit",  required=True, type=int, help="Número de resultados")
-    parser.add_argument("--after",  default=None,        help="Cursor de paginação (opcional)")
+    parser.add_argument("--after",  default=None,            help="Cursor de paginação (opcional)")
     args = parser.parse_args()
 
-    resultado = pesquisar_comunidade(
+    resultado = obter_respostas(
         bearer_token=bearer_token,
-        query=args.query,
+        id_post=args.id,
         limit=args.limit,
         after=args.after,
     )
     print(json.dumps(resultado, indent=2, ensure_ascii=False))
 
-    page_info = resultado["data"]["searchPosts"]["pageInfo"]
+    page_info = resultado["data"]["replies"]["pageInfo"]
     if page_info["hasNextPage"]:
-        proxima_pagina = pesquisar_comunidade(
+        proxima_pagina = obter_respostas(
             bearer_token=bearer_token,
-            query=args.query,
+            id_post=args.id,
             limit=args.limit,
             after=page_info["endCursor"]
         )
