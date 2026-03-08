@@ -5,6 +5,7 @@ from mcp.server.fastmcp import FastMCP
 from src.get_env import get_env
 from src.pesquisar_comunidade import pesquisar_comunidade as pesquisar_comunidade_fn
 from src.obter_respostas import obter_respostas as obter_respostas_fn
+from src.acessar_postagem import acessar_postagem
 
 mcp = FastMCP("SankhyaDocsServer")
 
@@ -44,7 +45,7 @@ def acessar_postagem_comunidade(rota: str) -> str:
     Returns:
         Texto limpo da postagem ou mensagem de erro.
     """
-    return f"https://community.sankhya.com.br/{rota}"
+    return acessar_postagem(rota)
 
 @mcp.tool()
 def obter_respostas_postagem_comunidade(id_post: str, limit: int, after: str = "") -> str:
