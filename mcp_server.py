@@ -1,4 +1,10 @@
+import json
+
 from mcp.server.fastmcp import FastMCP
+
+from src.get_env import get_env
+from src.pesquisar_comunidade import pesquisar_comunidade as pesquisar_comunidade_fn
+
 mcp = FastMCP("SankhyaDocsServer")
 
 @mcp.tool()
@@ -16,7 +22,13 @@ def pesquisar_comunidade(termo_pesquisa: str, limit: int, after: str = "") -> st
         String formatada com os posts encontrados, incluindo `endCursor`
         e `hasNextPage` para permitir paginação, ou mensagem de erro.
     """
-    return f"https://api.bettermode.com/?query={termo_pesquisa}&limit={limit}&after={after}"
+    resultado = pesquisar_comunidade_fn(
+        bearer_token=get_env("BEARER_TOKEN"),
+        query=termo_pesquisa,
+        limit=limit,
+        after=after
+    )
+    return json.dumps(resultado, ensure_ascii=False)
 
 @mcp.tool()
 def acessar_postagem_comunidade(rota: str) -> str: # /developers/personalizacao-desenvolvimento/post/erro-ora-01013-o-usuario-solicitou-o-cancelamento-da-operacao-hF2NxMiD5ALJPlo

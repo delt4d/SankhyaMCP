@@ -7,22 +7,12 @@ query searchPosts($after: String, $filters: FiltersInput, $limit: Int!, $query: 
     searchConfig: $searchConfig
   ) {
     nodes {
-      createdAt
-      description
-      externalUrl
       id
-      lastActivityAt
-      shortContent
-      slug
-      images {
-        ... on Image {
-          downloadUrl
-          url
-        }
-      }
-      relativeUrl
-      textContent
       title
+      description
+      relativeUrl
+      lastActivityAt
+      publishedAt
     }
     pageInfo {
       endCursor

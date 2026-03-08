@@ -1,0 +1,278 @@
+query searchPosts(
+  $after: String
+  $filters: FiltersInput
+  $limit: Int!
+  $query: String!
+  $searchConfig: SearchConfigInput
+) {
+  searchPosts(
+    after: $after
+    filters: $filters
+    limit: $limit
+    query: $query
+    searchConfig: $searchConfig
+  ) {
+    __typename
+    nodes {
+      __typename
+      allowedEmojis
+      allowedReactions
+      attachmentIds
+      createdAt
+      createdById
+      description
+      embedIds
+      externalId
+      externalUrl
+      followersCount
+      forbiddenEmojis
+      forbiddenReactions
+      hasMoreContent
+      id
+      imageIds
+      images {
+        __typename
+        ... on Emoji {
+          __typename
+          id
+          text
+        }
+        ... on File {
+          __typename
+          downloadUrl
+          extension
+          id
+          name
+          size
+          status
+          url
+        }
+        ... on Glyph {
+          __typename
+          id
+          text
+          variant
+        }
+        ... on Image {
+          __typename
+          cropHeight
+          cropWidth
+          cropX
+          cropY
+          cropZoom
+          dominantColorHex
+          downloadUrl
+          dpi
+          height
+          id
+          name
+          status
+          url
+          width
+        }
+      }
+      isAnonymous
+      isHidden
+      language
+      lastActivityAt
+      locked
+      mentionedMembers
+      negativeReactions
+      negativeReactionsCount
+      networkId
+      owner {
+        __typename
+        member {
+          __typename
+          bannerId
+          blockedMemberIds
+          createdAt
+          displayName
+          email
+          emailStatus
+          externalId
+          externalUrl
+          flagged
+          id
+          lastSeen
+          lastSeenAt
+          locale
+          name
+          networkId
+          newEmail
+          overrideTeammate
+          profilePicture {
+            __typename
+            ... on File {
+              __typename
+              downloadUrl
+              extension
+              id
+              name
+              size
+              status
+              url
+            }
+            ... on Glyph {
+              __typename
+              id
+              text
+              variant
+            }
+            ... on Image {
+              __typename
+              cropHeight
+              cropWidth
+              cropX
+              cropY
+              cropZoom
+              dominantColorHex
+              downloadUrl
+              dpi
+              height
+              id
+              name
+              status
+              url
+              urls {
+                __typename
+                full
+                icon
+                large
+                medium
+                small
+                thumb
+              }
+              width
+            }
+          }
+          profilePictureId
+          relativeUrl
+          roleId
+          score
+          staffReasons
+          status
+          subscribersCount
+          tagline
+          teammate
+          timeZone
+          updatedAt
+          url
+          username
+          verifiedAt
+        }
+      }
+      ownerId
+      pinnedInto
+      pollIds
+      positiveReactions
+      positiveReactionsCount
+      postTypeId
+      primaryReactionType
+      publishedAt
+      reactionsCount
+      relativeUrl
+      repliedToId
+      repliedToIds
+      repliesCount
+      scheduledFor
+      shortContent
+      singleChoiceReactions
+      slug
+      space {
+        __typename
+        address {
+          __typename
+          editable
+          exact
+          path
+        }
+        bannerId
+        createdAt
+        createdById
+        customOrderingIndexInGroup
+        description
+        externalId
+        externalUrl
+        groupId
+        hidden
+        highlightedTagIds
+        id
+        image {
+          __typename
+          ... on Glyph {
+            __typename
+            id
+            text
+            variant
+          }
+          ... on Image {
+            __typename
+            cropHeight
+            cropWidth
+            cropX
+            cropY
+            cropZoom
+            dominantColorHex
+            downloadUrl
+            dpi
+            height
+            id
+            name
+            status
+            url
+            urls {
+              __typename
+              full
+              icon
+              large
+              medium
+              small
+              thumb
+            }
+            width
+          }
+        }
+        imageId
+        inviteOnly
+        isHomepage
+        isNewUserHomepage
+        isReturningUserHomepage
+        key
+        layout
+        membersCount
+        name
+        networkId
+        nonAdminsCanInvite
+        postsCount
+        private
+        relativeUrl
+        slug
+        subscribersCount
+        type
+        updatedAt
+        url
+        whoCanPost
+        whoCanReact
+        whoCanReply
+      }
+      spaceId
+      status
+      subscribersCount
+      tagIds
+      textContent
+      thumbnailId
+      title
+      topicIds
+      totalRepliesCount
+      updatedAt
+      url
+    }
+    pageInfo {
+      __typename
+      endCursor
+      hasNextPage
+    }
+    totalCount
+  }
+}

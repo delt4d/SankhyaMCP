@@ -1,6 +1,7 @@
 import requests
 import argparse
 from pathlib import Path
+from src.get_env import get_env
 
 graphql_query = (
     Path(__file__).parent 
@@ -38,7 +39,7 @@ def _check_graphql_errors(data: dict) -> None:
 
     raise BettermodeGraphQLError(errors)
 
-def buscar_comunidade(
+def pesquisar_comunidade(
     bearer_token: str,
     query: str,
     limit: int,
@@ -78,12 +79,9 @@ def buscar_comunidade(
 
 
 if __name__ == "__main__":
-    import os
     import json
 
-    bearer_token = os.environ.get("BEARER_TOKEN")
-    if not bearer_token:
-        raise ValueError("Variável de ambiente BEARER_TOKEN não definida.")
+    bearer_token = get_env("BEARER_TOKEN")
 
     parser = argparse.ArgumentParser(description="Busca posts na Comunidade Sankhya.")
     parser.add_argument("--query",  required=True,       help="Termo de busca")
@@ -91,7 +89,7 @@ if __name__ == "__main__":
     parser.add_argument("--after",  default=None,        help="Cursor de paginação (opcional)")
     args = parser.parse_args()
 
-    resultado = buscar_comunidade(
+    resultado = pesquisar_comunidade(
         bearer_token=bearer_token,
         query=args.query,
         limit=args.limit,
@@ -101,7 +99,7 @@ if __name__ == "__main__":
 
     page_info = resultado["data"]["searchPosts"]["pageInfo"]
     if page_info["hasNextPage"]:
-        proxima_pagina = buscar_comunidade(
+        proxima_pagina = pesquisar_comunidade(
             bearer_token=bearer_token,
             query=args.query,
             limit=args.limit,
