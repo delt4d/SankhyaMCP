@@ -1,7 +1,7 @@
 import requests
 from pathlib import Path
-from bettermode import check_graphql_errors
-from get_env import get_env
+from src.bettermode import check_graphql_errors
+from src.get_env import get_env
 
 graphql_query = (
     Path(__file__).parent 

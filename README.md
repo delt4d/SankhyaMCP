@@ -92,8 +92,9 @@ pytest tests/ -v
 
 | Ferramenta | Descrição |
 |---|---|
-| `buscar_comunidade` | Pesquisa tópicos/discussões por termo. Retorna título e URL dos resultados. |
-| `acessar_artigo_comunidade` | Acessa um post específico e retorna o conteúdo limpo (sem menus/rodapés). Restrito a `community.sankhya.com.br`. |
+| `pesquisar_comunidade` | Pesquisa tópicos/discussões por termo. Retorna título, URL e resumo dos resultados. |
+| `acessar_postagem_comunidade` | Acessa um post específico e retorna o conteúdo limpo (sem menus/rodapés). Restrito a `community.sankhya.com.br`. |
+| `obter_respostas` | Busca respostas/replies de um post por ID, com paginação (`limit` e `after`). |
 
 ---
 
