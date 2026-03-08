@@ -14,6 +14,11 @@ def obter_respostas(
     limit: int,
     after: str|None = None
 ) -> dict:
+    """
+    Busca uma página de respostas para um post/reply.
+    Para buscar TODAS as respostas com paginação, use buscar_todas_respostas().
+    Para buscar a ÁRVORE completa recursiva, use buscar_arvore_completa().
+    """
     url = "https://api.bettermode.com/"
     headers = {
         "Content-Type": "application/json;charset=utf-8",
@@ -48,32 +53,151 @@ def obter_respostas(
 
     return data
 
+
+def buscar_todas_respostas(
+    bearer_token: str,
+    id_post: str,
+    limit: int = 50
+) -> list:
+    """
+    Busca TODAS as respostas de um item com paginação automática.
+    Retorna lista com todos os nodes, pagina automaticamente.
+    """
+    todas_respostas = []
+    cursor = None
+    
+    while True:
+        resposta = obter_respostas(
+            bearer_token=bearer_token,
+            id_post=id_post,
+            limit=limit,
+            after=cursor
+        )
+        
+        replies = resposta.get('data', {}).get('replies', {})
+        nodes = replies.get('nodes', [])
+        page_info = replies.get('pageInfo', {})
+        
+        todas_respostas.extend(nodes)
+        
+        if not page_info.get('hasNextPage', False):
+            break
+        
+        cursor = page_info.get('endCursor')
+    
+    return todas_respostas
+
+
+def buscar_arvore_completa(
+    bearer_token: str,
+    id_post: str,
+    limit: int = 50,
+    nivel: int = 0,
+    max_niveis: int = 10,
+    _debug: bool = False
+) -> dict:
+    """
+    Busca RECURSIVAMENTE toda a árvore de respostas.
+    
+    Para cada resposta encontrada, busca suas sub-respostas (replies de replies).
+    Continua recursivamente até não haver mais respostas ou atingir max_niveis.
+    
+    Args:
+        bearer_token: Token de autenticação
+        id_post: ID do post/reply raiz
+        limit: Respostas por página (padrão 50)
+        nivel: Nível de profundidade (uso interno)
+        max_niveis: Limite máximo de profundidade
+        _debug: Se True, imprime debug info
+    
+    Returns:
+        Dict com estrutura: {
+            'id': id_post,
+            'nodes': [respostas com 'replies' aninhadas],
+            'profundidade': nível alcançado,
+            'total': count total de comentários
+        }
+    """
+    
+    if nivel >= max_niveis:
+        if _debug:
+            print(f"{'  ' * nivel}⚠️  Limite de profundidade atingido")
+        return None
+    
+    # Buscar todas as respostas deste nível (com paginação automática)
+    nodes = buscar_todas_respostas(
+        bearer_token=bearer_token,
+        id_post=id_post,
+        limit=limit
+    )
+    
+    if _debug:
+        print(f"{'  ' * nivel}✓ {len(nodes)} respostas encontradas")
+    
+    total_count = len(nodes)
+    
+    # Para cada resposta, buscar suas sub-respostas recursivamente
+    for i, node in enumerate(nodes, 1):
+        node_id = node.get('id')
+        
+        if _debug:
+            print(f"{'  ' * nivel}  [{i}/{len(nodes)}] Buscando replies de: {node_id}")
+        
+        # RECURSÃO: passa o ID da resposta como novo postId
+        sub_arvore = buscar_arvore_completa(
+            bearer_token=bearer_token,
+            id_post=node_id,
+            limit=limit,
+            nivel=nivel + 1,
+            max_niveis=max_niveis,
+            _debug=_debug
+        )
+        
+        if sub_arvore:
+            node['replies'] = sub_arvore.get('nodes', [])
+            node['profundidade'] = sub_arvore.get('profundidade', 0)
+            total_count += sub_arvore.get('total', 0)
+        else:
+            node['replies'] = []
+            node['profundidade'] = 0
+    
+    return {
+        'id': id_post,
+        'nodes': nodes,
+        'profundidade': nivel,
+        'total': total_count
+    }
+
 if __name__ == "__main__":
     import json
     import argparse
 
     bearer_token = get_env("BEARER_TOKEN")
 
-    parser = argparse.ArgumentParser(description="Busca posts na Comunidade Sankhya.")
-    parser.add_argument("--id",     required=True,           help="Id do POST")
-    parser.add_argument("--limit",  required=True, type=int, help="Número de resultados")
-    parser.add_argument("--after",  default=None,            help="Cursor de paginação (opcional)")
+    parser = argparse.ArgumentParser(description="Busca respostas na Comunidade Sankhya.")
+    parser.add_argument("--id",       required=True,           help="Id do POST/REPLY")
+    parser.add_argument("--limit",    required=True, type=int, help="Número de resultados por página")
+    parser.add_argument("--recursivo", action="store_true",    help="Busca TODA a árvore de respostas (recursivo)")
+    parser.add_argument("--debug",    action="store_true",     help="Mostra debug info")
+    parser.add_argument("--after",    default=None,            help="Cursor de paginação (apenas para busca simples)")
     args = parser.parse_args()
 
-    resultado = obter_respostas(
-        bearer_token=bearer_token,
-        id_post=args.id,
-        limit=args.limit,
-        after=args.after,
-    )
-    print(json.dumps(resultado, indent=2, ensure_ascii=False))
-
-    page_info = resultado["data"]["replies"]["pageInfo"]
-    if page_info["hasNextPage"]:
-        proxima_pagina = obter_respostas(
+    if args.recursivo:
+        print(f"🌳 Buscando árvore completa de: {args.id}")
+        print("=" * 80)
+        arvore = buscar_arvore_completa(
             bearer_token=bearer_token,
             id_post=args.id,
             limit=args.limit,
-            after=page_info["endCursor"]
+            _debug=args.debug
         )
-        print(json.dumps(proxima_pagina, indent=2, ensure_ascii=False))
+        print("=" * 80)
+        print(f"✅ Total de comentários (incluindo replies): {arvore['total']}")
+        print(json.dumps(arvore, indent=2, ensure_ascii=False))
+    else:
+        resultado = buscar_todas_respostas(
+            bearer_token=bearer_token,
+            id_post=args.id,
+            limit=args.limit
+        )
+        print(json.dumps(resultado, indent=2, ensure_ascii=False))

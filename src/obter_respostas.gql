@@ -17,19 +17,21 @@ query replies($after: String, $before: String, $excludePins: Boolean, $limit: In
             type
             value
         }
+        owner {
+            member {
+                name
+            }
+        }
         repliedToId
         replies(limit: 100, reverse: true, orderBy: createdAt) {
             nodes {
                 id
-                slug
+                owner {
+                    member {
+                        name
+                    }
+                }
                 shortContent
-                createdAt
-                publishedAt
-                ownerId
-                status
-                repliedToId
-                title
-                description
             }
             pageInfo {
                 endCursor
