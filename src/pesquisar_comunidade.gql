@@ -10,9 +10,14 @@ query searchPosts($after: String, $filters: FiltersInput, $limit: Int!, $query: 
       id
       title
       description
+      totalRepliesCount
       relativeUrl
       lastActivityAt
       publishedAt
+      space {
+        name
+      }
+      url
     }
     pageInfo {
       endCursor

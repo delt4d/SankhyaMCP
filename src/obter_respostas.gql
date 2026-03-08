@@ -18,6 +18,25 @@ query replies($after: String, $before: String, $excludePins: Boolean, $limit: In
             value
         }
         repliedToId
+        replies(limit: 100, reverse: true, orderBy: createdAt) {
+            nodes {
+                id
+                slug
+                shortContent
+                createdAt
+                publishedAt
+                ownerId
+                status
+                repliedToId
+                title
+                description
+            }
+            pageInfo {
+                endCursor
+                hasNextPage
+            }
+            totalCount
+        }
         publishedAt
     }
     pageInfo {
